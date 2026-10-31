@@ -21,13 +21,20 @@ class BasePage:
 
     def click(self, locator):
         self.clickable(locator).click()
+        self.capture()
 
     def fill(self, locator, value):
         element = self.visible(locator)
         element.clear()
         element.send_keys(value)
         element.send_keys("\t")  # trigger blur validation without fixed sleeps
+        self.capture()
         return element
+
+    def capture(self):
+        recorder = getattr(self.driver, "_urban_evidence", None)
+        if recorder:
+            recorder.capture(self.driver)
 
     def error_for(self, locator):
         field = self.visible(locator)
@@ -64,6 +71,7 @@ class LandingPage(BasePage):
         buttons = self.driver.find_elements(*self.COOKIE_BUTTON)
         if buttons and buttons[0].is_displayed():
             buttons[0].click()
+            self.capture()
 
 
 class OrderDetailsPage(BasePage):
@@ -86,6 +94,7 @@ class OrderDetailsPage(BasePage):
     def choose_station(self, query, option):
         station_control = self.visible(self.METRO)
         station_control.click()
+        self.capture()
         search_fields = self.driver.find_elements(By.XPATH, "//input[@type='text']")
         if search_fields:
             search_fields[-1].send_keys(query)
@@ -132,6 +141,7 @@ class RentalPage(BasePage):
         checkbox = self.visible((By.ID, color_id))
         if not checkbox.is_selected():
             self.driver.find_element(By.XPATH, f"//label[@for='{color_id}']").click()
+            self.capture()
         return checkbox.is_selected()
 
 

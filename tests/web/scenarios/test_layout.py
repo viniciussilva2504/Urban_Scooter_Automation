@@ -11,6 +11,7 @@ def test_main_scooter_model_is_present(landing_page):
     assert scooter.get_attribute("src").endswith("scooter.png")
     initial_scooter_opacity = float(scooter.find_element(By.XPATH, "..").value_of_css_property("opacity"))
     landing_page.driver.execute_script("window.scrollBy(0, window.innerHeight * 0.65)")
+    landing_page.capture()
     landing_page.wait.until(lambda d: float(d.find_element(*LandingPage.SCOOTER).value_of_css_property("opacity")) > initial_scooter_opacity)
     assert landing_page.visible(LandingPage.SPECS).is_displayed()
 
@@ -31,8 +32,10 @@ def test_faq_question_toggles_answer(landing_page):
     answer = question.find_element(By.XPATH, "following-sibling::*[1]")
     landing_page.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", question)
     question.click()
+    landing_page.capture()
     landing_page.wait.until(lambda _: answer.is_displayed())
     question.click()
+    landing_page.capture()
     landing_page.wait.until(lambda _: not answer.is_displayed())
 
 

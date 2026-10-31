@@ -45,12 +45,12 @@ Com o ambiente virtual ativo, instale pytest e Selenium:
 
 ```powershell
 python -m pip install --upgrade pip
-python -m pip install pytest selenium
+python -m pip install pytest selenium pillow imageio-ffmpeg
 ```
 
 Instale e abra o Google Chrome. O Selenium Manager tenta localizar ou baixar um ChromeDriver compatível automaticamente.
 
-Se o Selenium Manager não conseguir obter o driver, configure `URBAN_CHROMEDRIVER` com o caminho de um ChromeDriver compatível com a versão do Chrome instalado. Exemplo para esta máquina, se o arquivo ainda estiver presente:
+Se o Selenium Manager não conseguir obter o driver, a fixture tenta usar a versão mais recente encontrada no cache do Selenium. Você também pode configurar `URBAN_CHROMEDRIVER` manualmente com um driver compatível com o Chrome instalado. Exemplo para esta máquina, se o arquivo ainda estiver presente:
 
 ```powershell
 $env:URBAN_CHROMEDRIVER = "$env:USERPROFILE\.cache\selenium\chromedriver\win64\156.0.8078.80\chromedriver.exe"
@@ -61,7 +61,7 @@ $env:URBAN_CHROMEDRIVER = "$env:USERPROFILE\.cache\selenium\chromedriver\win64\1
 Configure a URL da aplicação Web. O fixture mantém o idioma português mesmo quando a URL já contém `?lng=pt`:
 
 ```powershell
-$env:URBAN_WEB_URL = "https://cnt-9b05c7d1-618d-4f8b-b030-b6b3cee639df?lng=pt"
+$env:URBAN_WEB_URL = "https://cnt-56ac29f0-0b53-460a-8a53-64bb249415e7.containerhub.tripleten-services.com?lng=pt"
 ```
 
 Opcionalmente, execute o Chrome sem abrir uma janela:
@@ -98,6 +98,7 @@ O script abaixo coleta os identificadores completos e chama pytest separadamente
 
 - Um arquivo `.log` com a saída detalhada do terminal.
 - Um arquivo `.xml` em formato JUnit com o resultado estruturado, duração, falha ou status de ignorado.
+- Um GIF animado e um vídeo MP4 em `reports/media/`, montados com capturas das etapas da interface (não é gravação contínua da tela).
 
 Os arquivos ficam na pasta `reports/`.
 
@@ -136,7 +137,7 @@ if ($failedTests.Count -gt 0) {
 Write-Host "`nTodos os casos coletados terminaram sem falha. Consulte reports/ para logs e XMLs."
 ```
 
-Casos parametrizados aparecem como identificadores separados na coleta e são executados individualmente pelo loop. Casos que dependem de dados ausentes podem terminar como `SKIPPED`; isso fica registrado no log e no XML.
+Casos parametrizados aparecem como identificadores separados na coleta e são executados individualmente pelo loop. Os estados dos pedidos são preparados automaticamente pela suíte; se a estande estiver indisponível, o teste falha com o erro de conexão em vez de ser ignorado.
 
 ### 6. Execute um arquivo inteiro ou a suíte toda em uma chamada
 
@@ -155,26 +156,18 @@ Para rodar a suíte Web inteira em uma chamada:
 python -m pytest tests/web -v --junitxml=reports/web-suite.xml
 ```
 
-## Dados necessários para testes de status
+## Dados e resultados esperados
 
-Os casos abaixo consultam pedidos já existentes. Se as variáveis não forem configuradas, os casos correspondentes serão ignorados pelo pytest:
+Os casos de status criam seus próprios pedidos na estande. Os cenários de aceite e chegada criam um entregador temporário pela API e o removem ao final, incluindo os pedidos associados. USBR31, USBR35 e USBR44 também criam pedidos. Use exclusivamente a estande de teste.
 
-```powershell
-$env:URBAN_WEB_ORDER_ID = "<numero-de-rastreamento-existente>"
-$env:URBAN_WEB_CANCEL_ORDER_ID = "<pedido-pendente-descartavel>"
-$env:URBAN_WEB_ACCEPTED_ORDER_ID = "<pedido-aceito-pelo-entregador>"
-$env:URBAN_WEB_INITIAL_ORDER_ID = "<pedido-no-deposito>"
-$env:URBAN_WEB_EN_ROUTE_ORDER_ID = "<pedido-a-caminho>"
-$env:URBAN_WEB_ARRIVED_ORDER_ID = "<pedido-entregue>"
-```
-
-Use números de rastreamento do ambiente de teste. O cenário de cancelamento modifica o pedido configurado em `URBAN_WEB_CANCEL_ORDER_ID`; escolha um pedido descartável. Os cenários USBR31, USBR35 e USBR44 criam pedidos na estande.
+Alguns dados de validação têm defeitos já registrados na planilha: USBR13, USBR17, USBR21, USBR24 e USBR25. Esses parâmetros estão marcados como `XFAIL` enquanto a aplicação mantiver o comportamento reportado. `XFAIL` significa que a asserção do requisito falhou como previsto; `XPASS` indica que a aplicação pode ter sido corrigida e a marcação deve ser reavaliada. Isso mantém os defeitos visíveis sem contá-los como testes aprovados.
 
 ## Organização dos testes Web
 
 - `tests/web/conftest.py`: fixtures do Chrome e configuração da URL.
 - `tests/web/pages/urban_scooter_page.py`: Page Objects, locators, interações e waits explícitos.
-- `tests/web/data.py`: dados reutilizados entre cenários.
+- `tests/web/data.py`: URL da estande e dados reutilizados entre cenários.
+- `tests/web/evidence.py`: captura checkpoints e gera GIF/MP4 por caso.
 - `tests/web/scenarios/test_layout.py`: USBR1–USBR5.
 - `tests/web/scenarios/test_order_form.py`: USBR6–USBR30 e USBR48.
 - `tests/web/scenarios/test_order_flow.py`: USBR31–USBR38.
@@ -183,4 +176,4 @@ Use números de rastreamento do ambiente de teste. O cenário de cancelamento mo
 
 ## API e Android
 
-Os testes de API e Android estão em `tests/api/` e `tests/mobile/`, respectivamente. Eles não são executados pelos comandos Web acima. A URL-base atual da API é `https://cnt-9b05c7d1-618d-4f8b-b030-b6b3cee639df`; a documentação está em `https://cnt-9b05c7d1-618d-4f8b-b030-b6b3cee639df/docs/pt/`. Para executar a suíte de API, configure `URBAN_API_BASE_URL` com essa URL-base. Android requer Appium, UiAutomator2 e um dispositivo configurado. Consulte os respectivos arquivos `conftest.py` antes de executar essas suítes.
+Os testes de API e Android estão em `tests/api/` e `tests/mobile/`, respectivamente. Eles não são executados pelos comandos Web acima. A URL-base atual da API é `https://cnt-56ac29f0-0b53-460a-8a53-64bb249415e7.containerhub.tripleten-services.com`; a documentação está em `https://cnt-56ac29f0-0b53-460a-8a53-64bb249415e7.containerhub.tripleten-services.com/docs/pt/`. Para executar a suíte de API, configure `URBAN_API_BASE_URL` com essa URL-base. Android requer Appium, UiAutomator2 e um dispositivo configurado. Consulte os respectivos arquivos `conftest.py` antes de executar essas suítes.

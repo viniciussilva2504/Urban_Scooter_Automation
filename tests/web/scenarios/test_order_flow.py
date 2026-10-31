@@ -23,6 +23,7 @@ def test_complete_order(landing_page, case_id):
     date_field = rental.visible(RentalPage.DATE)
     date_field.send_keys((date.today() + timedelta(days=1)).strftime("%d.%m.%Y"))
     date_field.send_keys("\t")
+    rental.capture()
     rental.choose_two_day_period()
     if case_id == "USBR31":
         rental.choose_color("black")
@@ -62,6 +63,7 @@ def test_optional_courier_comment_accepts_text(landing_page):
     rental = _valid_rental_page(landing_page)
     comment = rental.visible(RentalPage.COMMENT)
     comment.send_keys("Entregar na portaria")
+    rental.capture()
     assert comment.get_attribute("value") == "Entregar na portaria"
 
 
