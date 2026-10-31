@@ -1,0 +1,1247 @@
+{
+  "info": {
+    "name": "Urban Scooter API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "API tests for Urban Scooter courier management"
+  },
+  "item": [
+    {
+      "name": "Courier Creation",
+      "item": [
+        {
+          "name": "API1: Valid Data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"vinitst\", \"password\": \"1234\", \"firstName\": \"Vinic\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "}});",
+                  "",
+                  "pm.test('Body contains True', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('ok', True);",
+                  "}});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API2: Login 2 chars",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"ab\", \"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "}});",
+                  "",
+                  "pm.test('Body contains True', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('ok', True);",
+                  "}});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API3: Login 10 chars",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"abcdefghij\", \"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "}});",
+                  "",
+                  "pm.test('Body contains True', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('ok', True);",
+                  "}});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API4: Login < 2 chars",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"a\", \"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API5: Login > 10 chars",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"abcdefghijk\", \"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API6: Login with Numbers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"vini123\", \"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API7: Login Special Chars",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"vini@#\", \"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API8: Non-latin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"\\u0432\\u0438\\u043d\\u0438\\u0441\\u0438\\u0443\\u0441\", \"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API9: Login with Space",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"vini jes\", \"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API10: Empty Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"\", \"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API11: Missing Login field",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API12: Duplicate Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"duplxxxx\", \"password\": \"1234\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API13: Password < 4 digits",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"senhatres\", \"password\": \"123\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API14: Password > 4 digits",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"senhacinco\", \"password\": \"12345\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API15: Password with Letters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"senhaletra\", \"password\": \"abcd\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API16: Empty Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"senhavazia\", \"password\": \"\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API17: Missing Password field",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"semsenha\", \"firstName\": \"Ana\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API18: firstName 2 chars",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"nomedois\", \"password\": \"1234\", \"firstName\": \"Al\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "}});",
+                  "",
+                  "pm.test('Body contains True', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('ok', True);",
+                  "}});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API19: firstName 10 chars",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"nomedez\", \"password\": \"1234\", \"firstName\": \"Valentinaa\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "}});",
+                  "",
+                  "pm.test('Body contains True', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('ok', True);",
+                  "}});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API20: firstName < 2 chars",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"nomeum\", \"password\": \"1234\", \"firstName\": \"A\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API21: firstName > 10 chars",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"nomeonze\", \"password\": \"1234\", \"firstName\": \"Valentinaaa\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API22: firstName with Numbers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"nomenum\", \"password\": \"1234\", \"firstName\": \"Ana12\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API23: firstName Special Chars",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"nomeesp\", \"password\": \"1234\", \"firstName\": \"An@!\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API24: Empty firstName",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"nomevazio\", \"password\": \"1234\", \"firstName\": \"\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API25: Missing firstName field",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"login\": \"semnome\", \"password\": \"1234\"}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Courier Deletion",
+      "item": [
+        {
+          "name": "API26: Delete existing courier",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier/22",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier",
+                "22"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "}});",
+                  "",
+                  "pm.test('Body contains True', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('ok', True);",
+                  "}});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API28: Delete already deleted",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier/22",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier",
+                "22"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API29: Delete non-existent ID",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier",
+                "999999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API30: Delete without ID",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API31: Delete non-numeric ID",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/courier/abc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courier",
+                "abc"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "}});",
+                  ""
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

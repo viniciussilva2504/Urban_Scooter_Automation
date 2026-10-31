@@ -1,0 +1,13 @@
+{
+  "id": "f4c5a6b7-1234-4321-a1b2-c3d4e5f6g7h8",
+  "name": "Urban Scooter Env",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "https://cnt-566b8697-3660-4522-9354-be62b138e876.containerhub.tripleten-services.com",
+      "enabled": true
+    }
+  ],
+  "createdAt": "2026-10-28T00:00:00.000Z",
+  "updatedAt": "2026-10-28T00:00:00.000Z"
+}
