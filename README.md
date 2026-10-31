@@ -1,98 +1,186 @@
 # Urban Scooter — automação de QA
 
-O projeto reúne casos Web, Android e API relacionados à planilha `Vinicius Silva_QA32_SPT9.xlsx`. A automação de API cobre os casos API1–API31 com dados únicos e limpeza dos entregadores criados. Os testes de Web e Android ainda dependem de validação dos seletores e dos dados de ambiente descritos abaixo; a planilha não contém IDs de elementos nem credenciais para esses ambientes.
+Este repositório reúne casos de teste Web, API e Android associados à planilha `Vinicius Silva_QA32_SPT9.xlsx`. **O passo a passo deste README cobre a suíte Web com Python, Selenium, pytest e Page Object Model (POM).** Os testes de API e Android têm pré-requisitos próprios e não fazem parte da execução descrita aqui.
 
-## 1. Preparar o ambiente virtual (Windows PowerShell)
+## Suíte Web: instalação e execução
 
-Na raiz do projeto:
+Os comandos abaixo usam Windows PowerShell. Execute-os a partir da pasta raiz do repositório.
+
+### 1. Verifique o Python e crie o ambiente virtual
+
+Confira se o Python está instalado:
 
 ```powershell
-py -0p                         # lista versões Python instaladas
-py -3.10 -m venv .venv         # ou troque 3.10 pela versão disponível (3.10+)
+py --version
+```
+
+Crie o ambiente virtual uma vez. Se a pasta `.venv` já existir, pule a criação:
+
+```powershell
+py -m venv .venv
+```
+
+Ative o ambiente:
+
+```powershell
 .\.venv\Scripts\Activate.ps1
+```
+
+Quando ativo, o nome `.venv` aparece no início do prompt do PowerShell. Se a política de execução bloquear a ativação, libere scripts apenas para a janela atual e tente de novo:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+Para sair do ambiente virtual ao terminar:
+
+```powershell
+deactivate
+```
+
+### 2. Instale as dependências Web
+
+Com o ambiente virtual ativo, instale pytest e Selenium:
+
+```powershell
 python -m pip install --upgrade pip
-python -m pip install pytest selenium Appium-Python-Client
+python -m pip install pytest selenium
 ```
 
-Se a política do PowerShell bloquear a ativação, use o executável do venv diretamente em todos os comandos: `\.venv\Scripts\python.exe -m pytest ...`.
+Instale e abra o Google Chrome. O Selenium Manager tenta localizar ou baixar um ChromeDriver compatível automaticamente.
 
-Para sair do ambiente: `deactivate`.
-
-## 2. API (Python/pytest)
-
-Configure `URBAN_API_BASE_URL` com a URL do servidor de **teste** (não use produção). O valor que estava no ambiente Postman foi `https://cnt-566b8697-3660-4522-9354-be62b138e876.containerhub.tripleten-services.com`; confirme que esse servidor continua disponível antes de executar.
+Se o Selenium Manager não conseguir obter o driver, configure `URBAN_CHROMEDRIVER` com o caminho de um ChromeDriver compatível com a versão do Chrome instalado. Exemplo para esta máquina, se o arquivo ainda estiver presente:
 
 ```powershell
-$env:URBAN_API_BASE_URL = "https://<servidor-de-teste>"
-python -m pytest tests/api -v
+$env:URBAN_CHROMEDRIVER = "$env:USERPROFILE\.cache\selenium\chromedriver\win64\156.0.8078.80\chromedriver.exe"
 ```
 
-Os casos criam entregadores com logins aleatórios e removem os registros após o uso. Se a conexão ou a URL não estiver configurada, pytest marca a suíte como ignorada. Para executar um caso ou grupo:
+### 3. Configure a estande de teste
+
+Configure a URL da aplicação Web. O fixture mantém o idioma português mesmo quando a URL já contém `?lng=pt`:
 
 ```powershell
-python -m pytest tests/api/test_couriers.py::test_api1_create_courier_and_login -v
-python -m pytest tests/api/test_couriers.py -k "invalid_login or password or first_name" -v
+$env:URBAN_WEB_URL = "https://cnt-9b05c7d1-618d-4f8b-b030-b6b3cee639df?lng=pt"
 ```
 
-Também é possível executar a coleção manualmente no Postman, importando `postman/urban_scooter_env.json` e `postman/urban_scooter_api_collection.json`. Confira a variável `baseUrl` antes de iniciar.
-
-## 3. Web (Python, Selenium, pytest e POM)
-
-Defina `URBAN_WEB_URL` com a URL do ambiente de teste (não use produção). O Selenium Manager gerencia o ChromeDriver. Os testes usam waits explícitos de até 10 segundos e um navegador isolado por caso; não há `sleep` fixo nem espera implícita.
+Opcionalmente, execute o Chrome sem abrir uma janela:
 
 ```powershell
-$env:URBAN_WEB_URL = "https://cnt-a41adca0-cc6f-4d4c-844a-73cc747952be.containerhub.tripleten-services.com?lng=pt"
-$env:URBAN_HEADLESS = "true"  # opcional
-# Se o Selenium Manager não puder baixar o driver, aponte para um ChromeDriver compatível:
-# $env:URBAN_CHROMEDRIVER = "C:\\WebDriver\\bin\\chromedriver.exe"
-python -m pytest tests/web -v
+$env:URBAN_HEADLESS = "true"
 ```
 
-Os Page Objects estão em `tests/web/pages/urban_scooter_page.py`, os cenários estão em `tests/web/scenarios/` e os dados reutilizáveis ficam em `tests/web/data.py`. Informe números de rastreamento para testar os estados específicos sem criar nem alterar esses pedidos:
+### 4. Confira quais casos serão executados
+
+Liste os casos que pytest encontrou, incluindo cada variação parametrizada:
 
 ```powershell
-$env:URBAN_WEB_ORDER_ID = "<pedido-existente>"
-$env:URBAN_WEB_CANCEL_ORDER_ID = "<pedido-pendente-descartável>"
-$env:URBAN_WEB_ACCEPTED_ORDER_ID = "<pedido-aceito>"
-$env:URBAN_WEB_INITIAL_ORDER_ID = "<pedido-no-depósito>"
+python -m pytest --collect-only -q tests/web
+```
+
+Um caso específico pode ser executado usando o identificador exibido nessa lista:
+
+```powershell
+python -m pytest "tests/web/scenarios/test_layout.py::test_cookie_consent_dismisses_banner" -v
+```
+
+Para ver os identificadores das variações de um teste parametrizado:
+
+```powershell
+python -m pytest --collect-only -q tests/web/scenarios/test_order_form.py
+```
+
+Copie o identificador completo desejado, incluindo o trecho entre colchetes, para executar somente aquela variação.
+
+### 5. Execute todos os casos Web, um por vez, e documente os resultados
+
+O script abaixo coleta os identificadores completos e chama pytest separadamente para cada caso. Cada execução gera:
+
+- Um arquivo `.log` com a saída detalhada do terminal.
+- Um arquivo `.xml` em formato JUnit com o resultado estruturado, duração, falha ou status de ignorado.
+
+Os arquivos ficam na pasta `reports/`.
+
+```powershell
+New-Item -ItemType Directory -Force reports | Out-Null
+
+$collectedTests = python -m pytest --collect-only -q tests/web
+if ($LASTEXITCODE -ne 0) {
+    throw "Falha ao coletar os testes Web. Confira as dependências e a saída acima."
+}
+
+$testNodes = $collectedTests | Where-Object { $_ -match '^tests[\\/].+::test_' }
+if (-not $testNodes) {
+    throw "Nenhum caso Web foi encontrado. Confira se o venv está ativo e as dependências instaladas."
+}
+
+$failedTests = @()
+foreach ($testNode in $testNodes) {
+    $reportName = $testNode -replace '[^A-Za-z0-9_.-]', '_'
+    Write-Host "`nExecutando: $testNode"
+
+    python -m pytest "$testNode" -v "--junitxml=reports/$reportName.xml" 2>&1 |
+        Tee-Object -FilePath "reports/$reportName.log"
+
+    if ($LASTEXITCODE -ne 0) {
+        $failedTests += $testNode
+    }
+}
+
+if ($failedTests.Count -gt 0) {
+    Write-Host "`nCasos com falha:"
+    $failedTests | ForEach-Object { Write-Host " - $_" }
+    throw "A execução terminou com $($failedTests.Count) caso(s) com falha. Consulte reports/."
+}
+
+Write-Host "`nTodos os casos coletados terminaram sem falha. Consulte reports/ para logs e XMLs."
+```
+
+Casos parametrizados aparecem como identificadores separados na coleta e são executados individualmente pelo loop. Casos que dependem de dados ausentes podem terminar como `SKIPPED`; isso fica registrado no log e no XML.
+
+### 6. Execute um arquivo inteiro ou a suíte toda em uma chamada
+
+Para rodar cada grupo sem separar os casos individuais, use:
+
+```powershell
+python -m pytest tests/web/scenarios/test_layout.py -v --junitxml=reports/layout.xml
+python -m pytest tests/web/scenarios/test_order_form.py -v --junitxml=reports/order-form.xml
+python -m pytest tests/web/scenarios/test_order_flow.py -v --junitxml=reports/order-flow.xml
+python -m pytest tests/web/scenarios/test_order_status.py -v --junitxml=reports/order-status.xml
+```
+
+Para rodar a suíte Web inteira em uma chamada:
+
+```powershell
+python -m pytest tests/web -v --junitxml=reports/web-suite.xml
+```
+
+## Dados necessários para testes de status
+
+Os casos abaixo consultam pedidos já existentes. Se as variáveis não forem configuradas, os casos correspondentes serão ignorados pelo pytest:
+
+```powershell
+$env:URBAN_WEB_ORDER_ID = "<numero-de-rastreamento-existente>"
+$env:URBAN_WEB_CANCEL_ORDER_ID = "<pedido-pendente-descartavel>"
+$env:URBAN_WEB_ACCEPTED_ORDER_ID = "<pedido-aceito-pelo-entregador>"
+$env:URBAN_WEB_INITIAL_ORDER_ID = "<pedido-no-deposito>"
 $env:URBAN_WEB_EN_ROUTE_ORDER_ID = "<pedido-a-caminho>"
 $env:URBAN_WEB_ARRIVED_ORDER_ID = "<pedido-entregue>"
 ```
 
-Os casos de criação de pedidos usam dados válidos no ambiente de teste; o caso de cancelamento altera o pedido apontado por `URBAN_WEB_CANCEL_ORDER_ID`, que deve ser descartável. A aplicação atual não tem uma seção separada de regras de uso, então USBR5 verifica a ordem das seções existentes. A comparação visual do USBR3 com Figma requer uma referência de design, que não está incluída no repositório.
+Use números de rastreamento do ambiente de teste. O cenário de cancelamento modifica o pedido configurado em `URBAN_WEB_CANCEL_ORDER_ID`; escolha um pedido descartável. Os cenários USBR31, USBR35 e USBR44 criam pedidos na estande.
 
-## 4. Android (Appium)
+## Organização dos testes Web
 
-Pré-requisitos: Node.js, Appium 2 com driver UiAutomator2, Android SDK, emulador/dispositivo conectado e APK da aplicação. Instale o driver uma vez e confirme o pacote/atividade reais do APK:
+- `tests/web/conftest.py`: fixtures do Chrome e configuração da URL.
+- `tests/web/pages/urban_scooter_page.py`: Page Objects, locators, interações e waits explícitos.
+- `tests/web/data.py`: dados reutilizados entre cenários.
+- `tests/web/scenarios/test_layout.py`: USBR1–USBR5.
+- `tests/web/scenarios/test_order_form.py`: USBR6–USBR30 e USBR48.
+- `tests/web/scenarios/test_order_flow.py`: USBR31–USBR38.
+- `tests/web/scenarios/test_order_status.py`: USBR39–USBR47.
+- `tests/web/README.md`: visão resumida da estrutura Web.
 
-```powershell
-npm install --global appium
-appium driver install uiautomator2
-adb devices
-```
+## API e Android
 
-Em um terminal, inicie o servidor:
-
-```powershell
-appium --address 127.0.0.1 --port 4723
-```
-
-Em outro terminal, ative o venv e execute:
-
-```powershell
-python -m pytest tests/mobile -v
-python -m pytest tests/mobile/test_login.py -v
-```
-
-Antes, atualize `tests/mobile/conftest.py` com o `app_package`, `app_activity` e caminho do APK corretos. Os IDs `id_*` e os IDs sem prefixo `id_` divergem entre arquivos e foram presumidos; confira-os no Appium Inspector. Os casos de notificações, Figma, conectividade e fluxo de pedidos requerem dados/ações do backend e não devem ser considerados aprovados apenas por localizar um elemento.
-
-## 5. Descobrir e selecionar testes
-
-```powershell
-python -m pytest --collect-only -q          # lista o que será coletado
-python -m pytest tests/api -v                # somente API
-python -m pytest tests/web -v                # somente Web
-python -m pytest tests/mobile -v             # somente Android
-```
-
-Os testes móveis e web são testes de interface: dependem da aplicação e de ambiente em execução. Não há fixture que inicialize servidor/API ou crie os dados de pedidos necessários por conta própria.
+Os testes de API e Android estão em `tests/api/` e `tests/mobile/`, respectivamente. Eles não são executados pelos comandos Web acima. A URL-base atual da API é `https://cnt-9b05c7d1-618d-4f8b-b030-b6b3cee639df`; a documentação está em `https://cnt-9b05c7d1-618d-4f8b-b030-b6b3cee639df/docs/pt/`. Para executar a suíte de API, configure `URBAN_API_BASE_URL` com essa URL-base. Android requer Appium, UiAutomator2 e um dispositivo configurado. Consulte os respectivos arquivos `conftest.py` antes de executar essas suítes.
