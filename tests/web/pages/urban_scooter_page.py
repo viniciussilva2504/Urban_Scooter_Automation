@@ -64,6 +64,7 @@ class LandingPage(BasePage):
     SPECS = (By.CSS_SELECTOR, "[class*='Home_FirstPart']")
 
     def open_order(self):
+        self.accept_cookies()
         self.click(self.ORDER_BUTTON)
         return OrderDetailsPage(self.driver)
 
@@ -72,6 +73,12 @@ class LandingPage(BasePage):
         if buttons and buttons[0].is_displayed():
             buttons[0].click()
             self.capture()
+            self.wait.until(
+                lambda driver: not any(
+                    element.is_displayed()
+                    for element in driver.find_elements(*self.COOKIE_TEXT)
+                )
+            )
 
 
 class OrderDetailsPage(BasePage):

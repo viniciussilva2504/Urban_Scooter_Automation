@@ -19,7 +19,7 @@ def test_main_scooter_model_is_present(landing_page):
 
 
 def test_cookie_consent_dismisses_banner(landing_page, driver):
-    assert any(element.is_displayed() for element in driver.find_elements(*LandingPage.COOKIE_TEXT))
+    landing_page.visible(LandingPage.COOKIE_TEXT)
     landing_page.accept_cookies()
     assert not any(element.is_displayed() for element in driver.find_elements(*LandingPage.COOKIE_TEXT))
 
