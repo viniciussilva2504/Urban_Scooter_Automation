@@ -11,4 +11,17 @@ Os casos web estão separados por responsabilidade:
 - `evidence.py`: checkpoints visuais convertidos em GIF e MP4 por teste.
 - `conftest.py`: configuração e isolamento do Chrome por teste.
 
-Execute a suíte toda com `python -m pytest tests/web -v`, ou passe um arquivo ou nó pytest específico. A URL atual da estande é usada por padrão e pode ser sobrescrita com `URBAN_WEB_URL`. Os casos de status preparam os pedidos e entregadores necessários pela interface/API de teste. Os resultados JUnit ficam em `reports/`; os vídeos e GIFs ficam em `reports/media/`.
+Com o ambiente virtual ativo, configure o estande e rode todos os casos individualmente no PowerShell:
+
+```powershell
+$env:URBAN_WEB_URL = "https://cnt-0e96eb19-5cee-43ab-8a26-f2506764625d.containerhub.tripleten-services.com/?lng=pt"
+New-Item -ItemType Directory -Force reports | Out-Null
+$nodes = python -m pytest --collect-only -q tests/web | Where-Object { $_ -match '^tests[\\/].+::test_' }
+foreach ($node in $nodes) {
+    $name = $node -replace '[^A-Za-z0-9_.-]', '_'
+    Write-Host "Executando: $node"
+    python -m pytest "$node" -v "--junitxml=reports/$name.xml" 2>&1 | Tee-Object "reports/$name.log"
+}
+```
+
+Cada nó coletado é executado em uma chamada pytest separada; casos parametrizados também rodam separados. Para rodar apenas um caso, use o ID completo, por exemplo `python -m pytest "tests/web/scenarios/test_layout.py::test_cookie_consent_dismisses_banner" -v`. A URL padrão está em `data.py` e pode ser sobrescrita com `URBAN_WEB_URL`. Os casos de status preparam os pedidos e entregadores necessários pela interface/API de teste. Os resultados JUnit ficam em `reports/`; os vídeos e GIFs ficam em `reports/media/`.

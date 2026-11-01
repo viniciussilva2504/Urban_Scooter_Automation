@@ -56,12 +56,12 @@ class BasePage:
 class LandingPage(BasePage):
     ORDER_BUTTON = (By.XPATH, "//button[contains(.,'Fazer pedido') or contains(.,'Make order')]")
     COOKIE_BUTTON = (By.XPATH, "//button[contains(.,'Concordar') or contains(.,'Agree') or contains(.,'Accept')]")
-    COOKIE_TEXT = (By.XPATH, "//*[contains(translate(., 'COOKIES', 'cookies'),'cookies')]")
+    COOKIE_TEXT = (By.CSS_SELECTOR, "[class*='CookieText']")
     FAQ_HEADING = (By.XPATH, "//*[normalize-space()='Perguntas frequentes' or normalize-space()='Frequently asked questions']")
-    BLUEPRINT_IMAGE = (By.CSS_SELECTOR, "[class*='BluePrint'] img")
-    SCOOTER_IMAGE = (By.CSS_SELECTOR, "[class*='Scooter'] img")
+    BLUEPRINT_IMAGE = (By.CSS_SELECTOR, "img[src*='blueprint.png']")
+    SCOOTER_IMAGE = (By.CSS_SELECTOR, "img[src*='scooter.png']")
     SCOOTER = (By.CSS_SELECTOR, "[class*='Scooter']")
-    SPECS = (By.XPATH, "//*[normalize-space()='Modelo PRO']")
+    SPECS = (By.CSS_SELECTOR, "[class*='Home_FirstPart']")
 
     def open_order(self):
         self.click(self.ORDER_BUTTON)
@@ -79,7 +79,7 @@ class OrderDetailsPage(BasePage):
     NAME = (By.XPATH, "//input[contains(@placeholder,'Nome') or contains(@placeholder,'First name')]")
     SURNAME = (By.XPATH, "//input[contains(@placeholder,'Sobrenome') or contains(@placeholder,'Last name')]")
     ADDRESS = (By.XPATH, "//input[contains(@placeholder,'Endereço:') or contains(@placeholder,'Address')]")
-    METRO = (By.XPATH, "//div[normalize-space()='* Estação de metrô' or contains(@class,'Metro')]")
+    METRO = (By.CSS_SELECTOR, "input[placeholder*='Estação de metrô'], input[placeholder*='Metro station']")
     PHONE = (By.XPATH, "//input[contains(@placeholder,'Telefone') or contains(@placeholder,'Phone')]")
     NEXT = (By.XPATH, "//button[contains(.,'Avançar') or contains(.,'Next')]")
     ERROR = (By.XPATH, "//*[contains(.,'válido') or contains(.,'valid') or contains(.,'número válido')]")
@@ -93,12 +93,15 @@ class OrderDetailsPage(BasePage):
 
     def choose_station(self, query, option):
         station_control = self.visible(self.METRO)
-        station_control.click()
+        # Filling the address tabs into this search input and can open its menu.
+        # Sending keys to the already-focused input avoids toggling that menu closed.
+        station_control.send_keys(query)
         self.capture()
-        search_fields = self.driver.find_elements(By.XPATH, "//input[@type='text']")
-        if search_fields:
-            search_fields[-1].send_keys(query)
-        suggestion = (By.XPATH, f"//*[self::li or self::button or @role='option'][contains(normalize-space(),{self._xpath_literal(option)})]")
+        suggestion = (
+            By.XPATH,
+            "//button[contains(@class,'select-search__option') and "
+            f"contains(normalize-space(.),{self._xpath_literal(option)})]",
+        )
         self.click(suggestion)
         return option
 
@@ -117,7 +120,7 @@ class RentalPage(BasePage):
     RENT_OPTIONS = (By.XPATH, "//*[self::div or self::button or @role='option'][normalize-space()='um dia' or normalize-space()='dois dias' or normalize-space()='três dias' or normalize-space()='quatro dias' or normalize-space()='cinco dias' or normalize-space()='seis dias' or normalize-space()='sete dias']")
     COLOR_CHECKBOXES = (By.XPATH, "//input[@type='checkbox']")
     COMMENT = (By.XPATH, "//*[self::input or self::textarea][contains(@placeholder,'Comentário') or contains(@placeholder,'comment')]")
-    ORDER = (By.XPATH, "//button[contains(.,'Заказать') or contains(.,'Fazer pedido') or contains(.,'Order')]")
+    ORDER = (By.XPATH, "(//button[contains(.,'Заказать') or contains(.,'Fazer pedido') or contains(.,'Order')])[last()]")
     BACK = (By.XPATH, "//button[normalize-space()='Voltar' or normalize-space()='Back']")
 
     def submit_order(self):
@@ -133,8 +136,9 @@ class RentalPage(BasePage):
         return [option.text.strip() for option in self.driver.find_elements(*self.RENT_OPTIONS) if option.is_displayed()]
 
     def select_rent_option(self, visible_text):
-        self.click(self.PERIOD)
         option = (By.XPATH, f"//*[self::div or self::button or @role='option'][normalize-space()={OrderDetailsPage._xpath_literal(visible_text)}]")
+        if not any(element.is_displayed() for element in self.driver.find_elements(*option)):
+            self.click(self.PERIOD)
         self.click(option)
 
     def choose_color(self, color_id):

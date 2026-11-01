@@ -3,6 +3,7 @@ from datetime import date, timedelta
 
 import pytest
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from tests.web.data import METRO_SEARCH, METRO_STATION, VALID_ADDRESS, VALID_NAME, VALID_PHONE, VALID_SURNAME
 from tests.web.pages.urban_scooter_page import ConfirmationPage, OrderDetailsPage, RentalPage
 
@@ -23,6 +24,7 @@ def test_complete_order(landing_page, case_id):
     date_field = rental.visible(RentalPage.DATE)
     date_field.send_keys((date.today() + timedelta(days=1)).strftime("%d.%m.%Y"))
     date_field.send_keys("\t")
+    date_field.send_keys(Keys.ESCAPE)
     rental.capture()
     rental.choose_two_day_period()
     if case_id == "USBR31":
@@ -45,7 +47,7 @@ def test_rental_period_has_supported_choices(landing_page):
     options = rental.available_rent_options()
     assert len(options) == 7
     rental.select_rent_option("sete dias")
-    assert rental.visible(RentalPage.PERIOD).is_displayed()
+    assert "sete dias" in rental.driver.find_element(By.TAG_NAME, "body").text
 
 
 def test_rental_date_and_period_are_required(landing_page):

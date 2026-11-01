@@ -61,7 +61,7 @@ $env:URBAN_CHROMEDRIVER = "$env:USERPROFILE\.cache\selenium\chromedriver\win64\1
 Configure a URL da aplicação Web. O fixture mantém o idioma português mesmo quando a URL já contém `?lng=pt`:
 
 ```powershell
-$env:URBAN_WEB_URL = "https://cnt-56ac29f0-0b53-460a-8a53-64bb249415e7.containerhub.tripleten-services.com?lng=pt"
+$env:URBAN_WEB_URL = "https://cnt-0e96eb19-5cee-43ab-8a26-f2506764625d.containerhub.tripleten-services.com/?lng=pt"
 ```
 
 Opcionalmente, execute o Chrome sem abrir uma janela:
@@ -176,4 +176,4 @@ Alguns dados de validação têm defeitos já registrados na planilha: USBR13, U
 
 ## API e Android
 
-Os testes de API e Android estão em `tests/api/` e `tests/mobile/`, respectivamente. Eles não são executados pelos comandos Web acima. A URL-base atual da API é `https://cnt-56ac29f0-0b53-460a-8a53-64bb249415e7.containerhub.tripleten-services.com`; a documentação está em `https://cnt-56ac29f0-0b53-460a-8a53-64bb249415e7.containerhub.tripleten-services.com/docs/pt/`. Para executar a suíte de API, configure `URBAN_API_BASE_URL` com essa URL-base. Android requer Appium, UiAutomator2 e um dispositivo configurado. Consulte os respectivos arquivos `conftest.py` antes de executar essas suítes.
+Os testes de API e Android estão em `tests/api/` e `tests/mobile/`, respectivamente. Eles não são executados pelos comandos Web acima. A URL-base atual da API é `https://cnt-0e96eb19-5cee-43ab-8a26-f2506764625d.containerhub.tripleten-services.com`; a documentação está em `https://cnt-0e96eb19-5cee-43ab-8a26-f2506764625d.containerhub.tripleten-services.com/docs/pt/`. Para executar a suíte de API, configure `URBAN_API_BASE_URL` com essa URL-base. Android requer Appium, UiAutomator2 e um dispositivo configurado. Consulte os respectivos arquivos `conftest.py` antes de executar essas suítes.
