@@ -1,6 +1,59 @@
 # Urban Scooter — automação de QA
 
-Este repositório reúne casos de teste Web, API e Android associados à planilha `Vinicius Silva_QA32_SPT9.xlsx`. **O passo a passo deste README cobre a suíte Web com Python, Selenium, pytest e Page Object Model (POM).** Os testes de API e Android têm pré-requisitos próprios e não fazem parte da execução descrita aqui.
+Projeto de automação de QA para o aplicativo Urban Scooter, baseado nos casos da planilha `Vinicius Silva_QA32_SPT9.xlsx`. A suíte Web usa Python, pytest, Selenium WebDriver e o padrão Page Object Model (POM). O repositório também contém testes de API e Android, cujas etapas de execução e validação estão em andamento.
+
+## Objetivo e cobertura
+
+Validar os principais fluxos de aluguel de patinetes, desde a página inicial até o acompanhamento de pedidos, além de preparar a automação de API e Android.
+
+| Área | Cobertura |
+| --- | --- |
+| Web | Layout, formulário e validações, criação de pedido e consulta de status. |
+| API | Casos de entregadores documentados em `tests/api/test_couriers.py` (API1–API31). |
+| Android | Casos organizados em `tests/mobile/`, com Appium e UiAutomator2. |
+
+## Tecnologias e práticas
+
+- Python e pytest para organizar e executar os casos.
+- Selenium WebDriver, waits explícitos e Page Object Model (POM) na suíte Web.
+- Testes parametrizados para cobrir valores válidos, inválidos e limites.
+- Relatórios JUnit XML e evidências visuais em GIF/MP4.
+- `urllib` para as solicitações HTTP da suíte de API.
+- Appium e UiAutomator2 para a automação Android.
+
+## Demonstrações Web
+
+Os GIFs abaixo mostram interações reais capturadas durante os testes: sugestão de estação, período de aluguel, cor do patinete e retorno entre etapas preservando os dados.
+
+<p align="center">
+  <img src="docs/media/station-autocomplete.gif" alt="Busca e seleção de estação sugerida" width="420">
+  <img src="docs/media/rental-period.gif" alt="Seleção do período de aluguel" width="420">
+</p>
+<p align="center">
+  <img src="docs/media/scooter-color.gif" alt="Seleção da cor do patinete" width="420">
+  <img src="docs/media/preserve-details.gif" alt="Dados preservados ao voltar para a etapa anterior" width="420">
+</p>
+
+Os GIFs completos gerados por caso ficam em `reports/media/`. Esses quatro exemplos foram copiados para `docs/media/` para que também apareçam na página do projeto no GitHub.
+
+## Organização do projeto
+
+```text
+.
+├── docs/media/       # GIFs selecionados para este README
+├── postman/          # Coleção e ambiente da API
+├── tests/
+│   ├── api/           # Testes de API
+│   ├── mobile/        # Testes Android
+│   └── web/
+│       ├── pages/     # Page Objects e interações da interface
+│       └── scenarios/ # Cenários Web por fluxo
+├── reports/           # Relatórios e evidências gerados localmente
+├── pytest.ini
+└── Vinicius Silva_QA32_SPT9.xlsx  # Casos de teste de referência
+```
+
+**O passo a passo a seguir cobre a suíte Web**, que pode ser executada independentemente das etapas de API e Android.
 
 ## Suíte Web: instalação e execução
 
@@ -176,4 +229,4 @@ Alguns dados de validação têm defeitos já registrados na planilha: USBR13, U
 
 ## API e Android
 
-Os testes de API e Android estão em `tests/api/` e `tests/mobile/`, respectivamente. Eles não são executados pelos comandos Web acima. A URL-base atual da API é `https://cnt-21e647cd-cf6f-4526-b07e-1d34f0ed0f44.containerhub.tripleten-services.com`; a documentação está em `https://cnt-21e647cd-cf6f-4526-b07e-1d34f0ed0f44.containerhub.tripleten-services.com/docs/pt/`. Para executar a suíte de API, configure `URBAN_API_BASE_URL` com essa URL-base. Android requer Appium, UiAutomator2 e um dispositivo configurado. Consulte os respectivos arquivos `conftest.py` antes de executar essas suítes.
+Os testes de API e Android estão em `tests/api/` e `tests/mobile/`, respectivamente, e não são executados pelos comandos Web acima. A URL-base atual da API é `https://cnt-21e647cd-cf6f-4526-b07e-1d34f0ed0f44.containerhub.tripleten-services.com`; a documentação está em `https://cnt-21e647cd-cf6f-4526-b07e-1d34f0ed0f44.containerhub.tripleten-services.com/docs/pt/`. Para executar a suíte de API, configure `URBAN_API_BASE_URL` com a URL-base ativa. Android requer Appium, UiAutomator2 e um dispositivo ou emulador configurado. Confira os respectivos arquivos `conftest.py` e valide as configurações do ambiente antes de executar essas suítes.
