@@ -1,6 +1,6 @@
 """Reusable input data for Urban Scooter web scenarios."""
 
-TEST_WEB_URL = "https://cnt-0e96eb19-5cee-43ab-8a26-f2506764625d.containerhub.tripleten-services.com/"
+TEST_WEB_URL = "https://cnt-21e647cd-cf6f-4526-b07e-1d34f0ed0f44.containerhub.tripleten-services.com/"
 
 VALID_NAME = "Ana Silva"
 VALID_SURNAME = "Silva"

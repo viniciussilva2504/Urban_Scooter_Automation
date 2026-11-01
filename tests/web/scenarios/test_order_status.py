@@ -11,13 +11,13 @@ from urllib.request import Request, urlopen
 
 import pytest
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 from tests.web.data import METRO_SEARCH, METRO_STATION, TEST_WEB_URL
-from tests.web.pages.urban_scooter_page import ConfirmationPage, OrderDetailsPage, OrderStatusPage, RentalPage
+from tests.web.pages.urban_scooter_page import ConfirmationPage, LandingPage, OrderDetailsPage, OrderStatusPage, RentalPage
 
 @pytest.fixture
 def status_page(landing_page, driver):
-    # The order number field and tracking action live in the shared page header.
     return OrderStatusPage(driver)
 
 
@@ -85,6 +85,7 @@ def arrived_order(accepted_order, order_api):
 
 
 def _lookup(status_page, order_id):
+    status_page.click(LandingPage.STATUS_BUTTON)
     status_page.visible(OrderStatusPage.ORDER_NUMBER_INPUT).send_keys(order_id)
     status_page.click(OrderStatusPage.GO)
 
@@ -162,6 +163,7 @@ def _create_order(landing_page, name):
     date_field = rental.visible(RentalPage.DATE)
     date_field.send_keys((date.today() + timedelta(days=1)).strftime("%d.%m.%Y"))
     date_field.send_keys("\t")
+    date_field.send_keys(Keys.ESCAPE)
     rental.capture()
     rental.choose_two_day_period()
     confirmation = rental.submit_order()

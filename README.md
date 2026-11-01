@@ -61,7 +61,7 @@ $env:URBAN_CHROMEDRIVER = "$env:USERPROFILE\.cache\selenium\chromedriver\win64\1
 Configure a URL da aplicação Web. O fixture mantém o idioma português mesmo quando a URL já contém `?lng=pt`:
 
 ```powershell
-$env:URBAN_WEB_URL = "https://cnt-0e96eb19-5cee-43ab-8a26-f2506764625d.containerhub.tripleten-services.com/?lng=pt"
+$env:URBAN_WEB_URL = "https://cnt-21e647cd-cf6f-4526-b07e-1d34f0ed0f44.containerhub.tripleten-services.com/?lng=pt"
 ```
 
 Opcionalmente, execute o Chrome sem abrir uma janela:
@@ -160,7 +160,7 @@ python -m pytest tests/web -v --junitxml=reports/web-suite.xml
 
 Os casos de status criam seus próprios pedidos na estande. Os cenários de aceite e chegada criam um entregador temporário pela API e o removem ao final, incluindo os pedidos associados. USBR31, USBR35 e USBR44 também criam pedidos. Use exclusivamente a estande de teste.
 
-Alguns dados de validação têm defeitos já registrados na planilha: USBR13, USBR17, USBR21, USBR24 e USBR25. Esses parâmetros estão marcados como `XFAIL` enquanto a aplicação mantiver o comportamento reportado. `XFAIL` significa que a asserção do requisito falhou como previsto; `XPASS` indica que a aplicação pode ter sido corrigida e a marcação deve ser reavaliada. Isso mantém os defeitos visíveis sem contá-los como testes aprovados.
+Alguns dados de validação têm defeitos já registrados na planilha: USBR13, USBR17, USBR21, USBR24 e USBR25. Esses parâmetros estão marcados como `XFAIL` enquanto a aplicação mantiver o comportamento reportado. O FAQ também tem um defeito reportado: a resposta não fecha ao clicar novamente; esse caso fica como `XFAIL`. `XFAIL` significa que a asserção do requisito falhou como previsto; `XPASS` indica que a aplicação pode ter sido corrigida e a marcação deve ser reavaliada. Isso mantém os defeitos visíveis sem contá-los como testes aprovados.
 
 ## Organização dos testes Web
 
@@ -176,4 +176,4 @@ Alguns dados de validação têm defeitos já registrados na planilha: USBR13, U
 
 ## API e Android
 
-Os testes de API e Android estão em `tests/api/` e `tests/mobile/`, respectivamente. Eles não são executados pelos comandos Web acima. A URL-base atual da API é `https://cnt-0e96eb19-5cee-43ab-8a26-f2506764625d.containerhub.tripleten-services.com`; a documentação está em `https://cnt-0e96eb19-5cee-43ab-8a26-f2506764625d.containerhub.tripleten-services.com/docs/pt/`. Para executar a suíte de API, configure `URBAN_API_BASE_URL` com essa URL-base. Android requer Appium, UiAutomator2 e um dispositivo configurado. Consulte os respectivos arquivos `conftest.py` antes de executar essas suítes.
+Os testes de API e Android estão em `tests/api/` e `tests/mobile/`, respectivamente. Eles não são executados pelos comandos Web acima. A URL-base atual da API é `https://cnt-21e647cd-cf6f-4526-b07e-1d34f0ed0f44.containerhub.tripleten-services.com`; a documentação está em `https://cnt-21e647cd-cf6f-4526-b07e-1d34f0ed0f44.containerhub.tripleten-services.com/docs/pt/`. Para executar a suíte de API, configure `URBAN_API_BASE_URL` com essa URL-base. Android requer Appium, UiAutomator2 e um dispositivo configurado. Consulte os respectivos arquivos `conftest.py` antes de executar essas suítes.

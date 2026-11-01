@@ -4,11 +4,14 @@ Locators use the accessible labels and visible copy from the test cases. If the
 application's copy changes, update locators here rather than in test scenarios.
 """
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 
 class BasePage:
+    COOKIE_CONFIRM = (By.ID, "rcc-confirm-button")
+
     def __init__(self, driver, timeout=10):
         self.driver = driver
         self.wait = WebDriverWait(driver, timeout, poll_frequency=0.2)
@@ -20,7 +23,16 @@ class BasePage:
         return self.wait.until(EC.element_to_be_clickable(locator))
 
     def click(self, locator):
-        self.clickable(locator).click()
+        element = self.clickable(locator)
+        try:
+            element.click()
+        except ElementClickInterceptedException:
+            consent_buttons = self.driver.find_elements(*self.COOKIE_CONFIRM)
+            if not consent_buttons or not consent_buttons[0].is_displayed():
+                raise
+            consent_buttons[0].click()
+            self.wait.until(EC.invisibility_of_element_located(self.COOKIE_CONFIRM))
+            self.clickable(locator).click()
         self.capture()
 
     def fill(self, locator, value):
@@ -55,6 +67,7 @@ class BasePage:
 
 class LandingPage(BasePage):
     ORDER_BUTTON = (By.XPATH, "//button[contains(.,'Fazer pedido') or contains(.,'Make order')]")
+    STATUS_BUTTON = (By.XPATH, "//button[contains(.,'Status do pedido') or contains(.,'Order status')]")
     COOKIE_BUTTON = (By.XPATH, "//button[contains(.,'Concordar') or contains(.,'Agree') or contains(.,'Accept')]")
     COOKIE_TEXT = (By.CSS_SELECTOR, "[class*='CookieText']")
     FAQ_HEADING = (By.XPATH, "//*[normalize-space()='Perguntas frequentes' or normalize-space()='Frequently asked questions']")

@@ -14,7 +14,7 @@ Os casos web estão separados por responsabilidade:
 Com o ambiente virtual ativo, configure o estande e rode todos os casos individualmente no PowerShell:
 
 ```powershell
-$env:URBAN_WEB_URL = "https://cnt-0e96eb19-5cee-43ab-8a26-f2506764625d.containerhub.tripleten-services.com/?lng=pt"
+$env:URBAN_WEB_URL = "https://cnt-21e647cd-cf6f-4526-b07e-1d34f0ed0f44.containerhub.tripleten-services.com/?lng=pt"
 New-Item -ItemType Directory -Force reports | Out-Null
 $nodes = python -m pytest --collect-only -q tests/web | Where-Object { $_ -match '^tests[\\/].+::test_' }
 foreach ($node in $nodes) {
